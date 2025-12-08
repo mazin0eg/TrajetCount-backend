@@ -1,0 +1,28 @@
+{
+  "name": "trajetcount-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --watch  ./src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mazin0eg/TrajetCount-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/mazin0eg/TrajetCount-backend/issues"
+  },
+  "homepage": "https://github.com/mazin0eg/TrajetCount-backend#readme",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.0.1"
+  }
+}
