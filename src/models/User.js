@@ -5,7 +5,7 @@ const UserSchema = mongoose.Schema({
     username : {type : String , unique : true , required : true , trim : true},
     email : {type : String , unique : true , required : true , trim : true},
     password : {type : String , unique : true , required : true , trim : true},
-    role : {type : String , enum : ["admin" , "Chauffeur"]}
+    role : {type : String , enum : ["admin" , "Chauffeur"], default: "Chauffeur"}
     
 }, { timestamps: true })
 
