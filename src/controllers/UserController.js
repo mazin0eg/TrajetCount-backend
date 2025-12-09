@@ -13,7 +13,7 @@ export const register = async (req, res) => {
     const salt = await bcrypt.genSalt(10)
     const hashpassword = await bcrypt.hash(password, salt)
     if (confirmPassword != password) {
-        return res.status(400).json({ message: "passwords are not the same " })
+       throw new HttpError("passwords are not the same ", 400)
     }
     const newUser = new User({
         username,
@@ -39,7 +39,7 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-        throw new HttpError("user not found")
+        throw new HttpError("user not found", 404)
     }
 
         const ismatching = await bcrypt.compare(password, user.password)
@@ -57,8 +57,9 @@ export const login = async (req, res) => {
         const accesstoken = jwt.sign(payload, process.env.ACCESS_TOKEN, { expiresIn: "1h" })
 
         res.status(200).json({
-            message: "login succesfully",
+            message: `login succesfully a si ${user.role}`,
             token: accesstoken
+            
         })
 
    
