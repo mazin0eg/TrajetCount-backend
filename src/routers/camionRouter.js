@@ -1,11 +1,19 @@
-import express from "express"
-import { addCamion, deletCamion, getAllCamions} from "../controllers/CamionController.js"
+import express from "express";
+import { verifytoken } from "../middelwars/authmiddelware.js";
+import { adminOnly } from "../middelwars/adminMiddleware.js";
+import { addCamion, deletCamion, getAllCamions, updateCamion, getCamionById } from "../controllers/CamionController.js";
 
+const router = express.Router();
 
-const router = express.Router()
+router.use(verifytoken);
 
-router.post("/addcamion/" , addCamion)
-router.delete("/deletcamion/:id" , deletCamion)
-router.get("/getcamions", getAllCamions)
+router.get("/", getAllCamions);
+router.get("/:id", getCamionById);
+
+router.use(adminOnly);
+
+router.post("/", addCamion);
+router.put("/:id", updateCamion);
+router.delete("/:id", deletCamion);
 
 export default router;
