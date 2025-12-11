@@ -10,7 +10,7 @@ export const addCamion = async (req, res) => {
         if (chauffeur.role !== 'Chauffeur') throw new HttpError('This user cant be a truck pilote')
     }
 
-    
+
     const newCamion = new Camion({
         marquer: marque,
         kilometrage: kilometrage || 0,
@@ -24,5 +24,18 @@ export const addCamion = async (req, res) => {
     } else {
         throw new HttpError("camion faild to be created")
     }
+
+}
+
+export const deletCamion = async (req, res) => {
+    const { id } = req.params
+    const deletcamion = await Camion.findByIdAndDelete(id )
+
+    if (!deletcamion) {
+        throw new HttpError("camion not found")
+    }else{
+        return res.status(201).json({message: "camion deleted"})
+    }
+
 
 }

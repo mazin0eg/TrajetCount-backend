@@ -26,16 +26,16 @@ export const register = async (req, res) => {
 
     if (saveduser) {
         const payload = {
-            userId: user._id,
-            username: user.username
+            userId: saveduser._id,
+            username: saveduser.username
         }
         const accesstoken = jwt.sign(payload, process.env.ACCESS_TOKEN, { expiresIn: "1h" })
         return res.status(201).json({
             message: "User registered successfully",
             user: {
-                id: newUser._id,
-                username: newUser.username,
-                email: newUser.email,
+                id: saveduser._id,
+                username: saveduser.username,
+                email: saveduser.email,
                 token: accesstoken
             }
         });

@@ -1,9 +1,10 @@
 import express from "express"
-import { addCamion} from "../controllers/CamionController.js"
+import { addCamion, deletCamion} from "../controllers/CamionController.js"
 
 
 const router = express.Router()
 
-router.post("/addCamion" , addCamion)
+router.post("/" , addCamion)
+router.delete("/:id" , deletCamion)
 
 export default router;
