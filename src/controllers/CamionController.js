@@ -39,3 +39,12 @@ export const deletCamion = async (req, res) => {
 
 
 }
+
+export const getAllCamions = async(req , res)=>{
+    const camions = await Camion.find()
+    if (!camions || camions.length === 0) {
+        throw new HttpError("No camion found", 404);
+    }
+
+    res.status(200).json(camions);
+}

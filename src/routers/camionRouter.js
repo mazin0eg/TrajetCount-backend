@@ -1,10 +1,11 @@
 import express from "express"
-import { addCamion, deletCamion} from "../controllers/CamionController.js"
+import { addCamion, deletCamion, getAllCamions} from "../controllers/CamionController.js"
 
 
 const router = express.Router()
 
-router.post("/" , addCamion)
-router.delete("/:id" , deletCamion)
+router.post("/addcamion/" , addCamion)
+router.delete("/deletcamion/:id" , deletCamion)
+router.get("/getcamions", getAllCamions)
 
 export default router;
