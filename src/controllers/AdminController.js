@@ -2,6 +2,7 @@ import Camion from "../models/comion.js";
 import Remorque from "../models/Remorque.js";
 import Pneu from "../models/Pneu.js";
 import User from "../models/User.js";
+import Trajet from "../models/Trajet.js";
 
 export const getDashboardStats = async (req, res) => {
     const [
@@ -9,17 +10,27 @@ export const getDashboardStats = async (req, res) => {
         totalRemorques,
         totalPneus,
         totalChauffeurs,
-        camionsWithChauffeur,
+        totalTrajets,
         remorquesAttached,
-        pneusNeedingMaintenance
+        pneusNeedingMaintenance,
+        trajetsEnCours,
+        trajetsPlanifies,
+        trajetsTermines,
+        camionsDisponibles,
+        camionsEnUtilisation
     ] = await Promise.all([
         Camion.countDocuments(),
         Remorque.countDocuments(),
         Pneu.countDocuments(),
         User.countDocuments({ role: "Chauffeur" }),
-        Camion.countDocuments({ currentChauffeur: { $ne: null } }),
+        Trajet.countDocuments(),
         Remorque.countDocuments({ camionAttache: { $ne: null } }),
-        Pneu.countDocuments({ $or: [{ usure: { $gte: 80 } }, { etat: "À remplacer" }] })
+        Pneu.countDocuments({ $or: [{ usure: { $gte: 80 } }, { etat: "À remplacer" }] }),
+        Trajet.countDocuments({ statut: "En cours" }),
+        Trajet.countDocuments({ statut: "Planifie" }),
+        Trajet.countDocuments({ statut: "Termine" }),
+        Camion.countDocuments({ disponible: true }),
+        Camion.countDocuments({ disponible: false })
     ]);
 
     res.status(200).json({
@@ -27,14 +38,18 @@ export const getDashboardStats = async (req, res) => {
             camions: totalCamions,
             remorques: totalRemorques,
             pneus: totalPneus,
-            chauffeurs: totalChauffeurs
+            chauffeurs: totalChauffeurs,
+            trajets: totalTrajets
         },
         status: {
-            camionsWithChauffeur,
-            camionsAvailable: totalCamions - camionsWithChauffeur,
+            camionsDisponibles,
+            camionsEnUtilisation,
             remorquesAttached,
             remorquesAvailable: totalRemorques - remorquesAttached,
-            pneusNeedingMaintenance
+            pneusNeedingMaintenance,
+            trajetsEnCours,
+            trajetsPlanifies,
+            trajetsTermines
         }
     });
 };

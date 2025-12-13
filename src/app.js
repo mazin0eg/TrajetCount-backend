@@ -4,6 +4,7 @@ import authRouter from "./routers/authRouter.js"
 import camionRouter from "./routers/camionRouter.js";
 import remorqueRouter from "./routers/remorqueRouter.js";
 import pneuRouter from "./routers/pneuRouter.js";
+import trajetRouter from "./routers/trajetRouter.js";
 import adminRouter from "./routers/adminRouter.js";
 import ErrorsHandler from "./middelwars/errorsMiddleware.js";
 import cors from "cors";
@@ -24,6 +25,7 @@ app.use("/api/auth", authRouter)
 app.use("/api/camions", camionRouter)
 app.use("/api/remorques", remorqueRouter)
 app.use("/api/pneus", pneuRouter)
+app.use("/api/trajets", trajetRouter)
 app.use("/api/admin", adminRouter)
 
 

@@ -3,18 +3,11 @@ import Camion from "../models/comion.js";
 import User from "../models/User.js";
 
 export const addCamion = async (req, res) => {
-    const { marque, kilometrage, currentChauffeur } = req.body
-    let chauffeur = null;
-    if (currentChauffeur) {
-        chauffeur = await User.findOne({ username: currentChauffeur });
-        if (chauffeur.role !== 'Chauffeur') throw new HttpError('This user cant be a truck pilote')
-    }
-
+    const { marque, kilometrage } = req.body
 
     const newCamion = new Camion({
-        marquer: marque,
-        kilometrage: kilometrage || 0,
-        currentChauffeur: chauffeur?.username || null,
+        marque: marque,
+        kilometrage: kilometrage || 0
     })
 
     const savedcamion = await newCamion.save()
@@ -24,7 +17,6 @@ export const addCamion = async (req, res) => {
     } else {
         throw new HttpError("camion faild to be created")
     }
-
 }
 
 export const deletCamion = async (req, res) => {
@@ -49,22 +41,19 @@ export const getAllCamions = async(req , res)=>{
     res.status(200).json(camions);
 }
 
+export const getAvailableCamions = async(req , res)=>{
+    const camions = await Camion.find({ disponible: true })
+    res.status(200).json(camions);
+}
+
 export const updateCamion = async (req, res) => {
     const { id } = req.params;
-    const { marque, kilometrage, currentChauffeur } = req.body;
-
-    let chauffeur = null;
-    if (currentChauffeur) {
-        chauffeur = await User.findOne({ username: currentChauffeur });
-        if (chauffeur && chauffeur.role !== 'Chauffeur') {
-            throw new HttpError('This user cant be a truck pilote', 400);
-        }
-    }
+    const { marque, kilometrage, disponible } = req.body;
 
     const updateData = {};
-    if (marque) updateData.marquer = marque;
+    if (marque) updateData.marque = marque;
     if (kilometrage !== undefined) updateData.kilometrage = kilometrage;
-    if (currentChauffeur !== undefined) updateData.currentChauffeur = chauffeur?.username || null;
+    if (disponible !== undefined) updateData.disponible = disponible;
 
     const updatedCamion = await Camion.findByIdAndUpdate(id, updateData, { new: true });
     
