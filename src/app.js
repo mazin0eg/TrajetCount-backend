@@ -31,7 +31,7 @@ app.use("/api/chauffeur", chauffeurRouter)
 app.use("/api/admin", adminRouter)
 
 
-app.use(ErrorsHandler)
+app.use(ErrorsHandler)  
 
 export default app;
 
