@@ -33,6 +33,33 @@ export const getDashboardStats = async (req, res) => {
         Camion.countDocuments({ disponible: false })
     ]);
 
+    // Get top chauffeurs by number of trips
+    const topChauffeurs = await User.aggregate([
+        { $match: { role: "Chauffeur" } },
+        {
+            $lookup: {
+                from: "trajets",
+                localField: "_id",
+                foreignField: "chauffeur",
+                as: "trajets"
+            }
+        },
+        {
+            $addFields: {
+                nombreTrajets: { $size: "$trajets" }
+            }
+        },
+        {
+            $project: {
+                username: 1,
+                email: 1,
+                nombreTrajets: 1
+            }
+        },
+        { $sort: { nombreTrajets: -1 } },
+        { $limit: 5 }
+    ]);
+
     res.status(200).json({
         totals: {
             camions: totalCamions,
@@ -50,6 +77,7 @@ export const getDashboardStats = async (req, res) => {
             trajetsEnCours,
             trajetsPlanifies,
             trajetsTermines
-        }
+        },
+        topChauffeurs
     });
 };

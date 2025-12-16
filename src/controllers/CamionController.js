@@ -3,10 +3,11 @@ import Camion from "../models/comion.js";
 import User from "../models/User.js";
 
 export const addCamion = async (req, res) => {
-    const { marque, kilometrage } = req.body
+    const { marque, immatriculation, kilometrage } = req.body
 
     const newCamion = new Camion({
         marque: marque,
+        immatriculation: immatriculation,
         kilometrage: kilometrage || 0
     })
 
@@ -33,7 +34,7 @@ export const deletCamion = async (req, res) => {
 }
 
 export const getAllCamions = async(req , res)=>{
-    const camions = await Camion.find()
+    const camions = await Camion.find().populate('remorqueAttachee', 'marque numeroSerie capaciteCharge etat')
     if (!camions || camions.length === 0) {
         throw new HttpError("No camion found", 404);
     }
@@ -42,16 +43,17 @@ export const getAllCamions = async(req , res)=>{
 }
 
 export const getAvailableCamions = async(req , res)=>{
-    const camions = await Camion.find({ disponible: true })
+    const camions = await Camion.find({ disponible: true }).populate('remorqueAttachee', 'marque numeroSerie capaciteCharge etat')
     res.status(200).json(camions);
 }
 
 export const updateCamion = async (req, res) => {
     const { id } = req.params;
-    const { marque, kilometrage, disponible } = req.body;
+    const { marque, immatriculation, kilometrage, disponible } = req.body;
 
     const updateData = {};
     if (marque) updateData.marque = marque;
+    if (immatriculation) updateData.immatriculation = immatriculation;
     if (kilometrage !== undefined) updateData.kilometrage = kilometrage;
     if (disponible !== undefined) updateData.disponible = disponible;
 
@@ -66,7 +68,7 @@ export const updateCamion = async (req, res) => {
 
 export const getCamionById = async (req, res) => {
     const { id } = req.params;
-    const camion = await Camion.findById(id);
+    const camion = await Camion.findById(id).populate('remorqueAttachee', 'marque numeroSerie capaciteCharge etat');
 
     if (!camion) {
         throw new HttpError("Camion not found", 404);

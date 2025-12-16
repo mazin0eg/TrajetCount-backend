@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import Trajet from "../models/Trajet.js";
 import bcrypt from "bcrypt"
 import HttpError from "../config/HttpError.js";
 
@@ -81,4 +82,54 @@ export const login = async (req, res) => {
 
 export const me = (req, res) => {
     res.json(req.user);
+}
+
+export const getAllChauffeurs = async (req, res) => {
+    const chauffeurs = await User.find({ role: "Chauffeur" })
+        .populate('nombreTrajets')
+        .select('username email createdAt');
+    
+    res.status(200).json(chauffeurs);
+}
+
+export const getChauffeurStats = async (req, res) => {
+    const { id } = req.params;
+    
+    const chauffeur = await User.findById(id)
+        .populate('nombreTrajets')
+        .select('username email role createdAt');
+        
+    if (!chauffeur || chauffeur.role !== 'Chauffeur') {
+        throw new HttpError("Chauffeur not found", 404);
+    }
+    
+    const [
+        totalTrajets,
+        trajetsEnCours,
+        trajetsPlanifies,
+        trajetsTermines,
+        trajetsAnnules
+    ] = await Promise.all([
+        Trajet.countDocuments({ chauffeur: id }),
+        Trajet.countDocuments({ chauffeur: id, statut: "En cours" }),
+        Trajet.countDocuments({ chauffeur: id, statut: "Planifie" }),
+        Trajet.countDocuments({ chauffeur: id, statut: "Termine" }),
+        Trajet.countDocuments({ chauffeur: id, statut: "Annule" })
+    ]);
+    
+    res.status(200).json({
+        chauffeur: {
+            id: chauffeur._id,
+            username: chauffeur.username,
+            email: chauffeur.email,
+            createdAt: chauffeur.createdAt
+        },
+        statistiques: {
+            totalTrajets,
+            trajetsEnCours,
+            trajetsPlanifies,
+            trajetsTermines,
+            trajetsAnnules
+        }
+    });
 }

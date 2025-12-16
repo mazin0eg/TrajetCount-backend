@@ -18,14 +18,14 @@ router.use(verifytoken);
 
 router.get("/", getAllTrajets);
 router.get("/:id", getTrajetById);
+router.patch("/:id/start", startTrajet);
+router.patch("/:id/complete", completeTrajet);
 
 router.use(adminOnly);
 
 router.post("/", createTrajet);
 router.put("/:id", updateTrajet);
 router.delete("/:id", deleteTrajet);
-router.patch("/:id/start", startTrajet);
-router.patch("/:id/complete", completeTrajet);
 router.post("/assign", assignTrajetToChauffeur);
 
 export default router;

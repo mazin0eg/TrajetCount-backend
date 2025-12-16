@@ -78,10 +78,21 @@ export const getAllTrajets = async (req, res) => {
     const filter = {};
     if (statut) filter.statut = statut;
     if (chauffeur) filter.chauffeur = chauffeur;
+    
+    if (req.user.role === "Chauffeur") {
+        filter.chauffeur = req.user.userId;
+    }
 
     const trajets = await Trajet.find(filter)
         .populate('chauffeur', 'username email')
-        .populate('camion', 'marque kilometrage')
+        .populate({
+            path: 'camion',
+            select: 'marque immatriculation kilometrage disponible',
+            populate: {
+                path: 'remorqueAttachee',
+                select: 'marque numeroSerie capaciteCharge etat'
+            }
+        })
         .populate('remorque', 'marque numeroSerie')
         .sort({ dateDepart: -1 });
 
@@ -93,11 +104,22 @@ export const getTrajetById = async (req, res) => {
     
     const trajet = await Trajet.findById(id)
         .populate('chauffeur', 'username email')
-        .populate('camion', 'marque kilometrage')
+        .populate({
+            path: 'camion',
+            select: 'marque immatriculation kilometrage disponible',
+            populate: {
+                path: 'remorqueAttachee',
+                select: 'marque numeroSerie capaciteCharge etat'
+            }
+        })
         .populate('remorque', 'marque numeroSerie');
 
     if (!trajet) {
         throw new HttpError("Trajet not found", 404);
+    }
+
+    if (req.user.role === "Chauffeur" && trajet.chauffeur._id.toString() !== req.user.userId) {
+        throw new HttpError("You can only view your own trips", 403);
     }
 
     res.status(200).json(trajet);
@@ -164,6 +186,10 @@ export const startTrajet = async (req, res) => {
         throw new HttpError("Trajet not found", 404);
     }
 
+    if (req.user.role !== "admin" && trajet.chauffeur.toString() !== req.user.userId) {
+        throw new HttpError("You can only update your own trips", 403);
+    }
+
     if (trajet.statut !== "Planifie") {
         throw new HttpError("Trajet cannot be started", 400);
     }
@@ -182,6 +208,10 @@ export const completeTrajet = async (req, res) => {
     const trajet = await Trajet.findById(id);
     if (!trajet) {
         throw new HttpError("Trajet not found", 404);
+    }
+
+    if (req.user.role !== "admin" && trajet.chauffeur.toString() !== req.user.userId) {
+        throw new HttpError("You can only update your own trips", 403);
     }
 
     if (trajet.statut !== "En cours") {

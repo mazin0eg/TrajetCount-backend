@@ -5,6 +5,7 @@ import camionRouter from "./routers/camionRouter.js";
 import remorqueRouter from "./routers/remorqueRouter.js";
 import pneuRouter from "./routers/pneuRouter.js";
 import trajetRouter from "./routers/trajetRouter.js";
+import chauffeurRouter from "./routers/chauffeurRouter.js";
 import adminRouter from "./routers/adminRouter.js";
 import ErrorsHandler from "./middelwars/errorsMiddleware.js";
 import cors from "cors";
@@ -18,7 +19,7 @@ instance.on("connected", () => {
 
 app.use(cors({
     origin: "*",
-    methods: ['GET', 'POST', 'OPTIONS', 'DELETE', 'PUT']
+    methods: ['GET', 'POST', 'OPTIONS', 'DELETE', 'PUT', 'PATCH']
 }))
 
 app.use("/api/auth", authRouter)
@@ -26,6 +27,7 @@ app.use("/api/camions", camionRouter)
 app.use("/api/remorques", remorqueRouter)
 app.use("/api/pneus", pneuRouter)
 app.use("/api/trajets", trajetRouter)
+app.use("/api/chauffeur", chauffeurRouter)
 app.use("/api/admin", adminRouter)
 
 

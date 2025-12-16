@@ -3,7 +3,8 @@ import { verifytoken } from "../middelwars/authmiddelware.js";
 import { adminOnly } from "../middelwars/adminMiddleware.js";
 import { 
     addRemorque, 
-    getAllRemorques, 
+    getAllRemorques,
+    getAvailableRemorques, 
     updateRemorque, 
     deleteRemorque, 
     attachRemorqueToCamion, 
@@ -17,6 +18,7 @@ router.use(adminOnly);
 
 router.post("/", addRemorque);
 router.get("/", getAllRemorques);
+router.get("/available", getAvailableRemorques);
 router.put("/:id", updateRemorque);
 router.delete("/:id", deleteRemorque);
 router.post("/attach", attachRemorqueToCamion);
